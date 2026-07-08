@@ -1,0 +1,10 @@
+
+# Files from compiler
+*.so
+*.pcm
+*.d
+
+# All output files
+test_files/*
+
+reports/*
