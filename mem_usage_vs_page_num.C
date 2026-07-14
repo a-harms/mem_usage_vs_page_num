@@ -80,7 +80,7 @@ void AnalyzeReport(std::string fileName) {
 
 
    // Need to enter into RDataFrame
-   //auto df = ROOT::RDataFrame df("report", fileName);   // this does not seem to work ):
+   //ROOT::RDataFrame df("report", fileName);   // this does not seem to work ):
 
    // Need to take from RDataFrame into TGraph(?)
 
@@ -102,7 +102,6 @@ void CreateFile(int fileNum, int numEntries, int numFields) {
    // Defining the data model
    for (int i = 0; i < numFields; i++) {
       auto fldPtr = model->MakeField<int>("Category" + std::to_string(i));
-
    }
 
    // creates a root file and a page sink which the writer connects the model to
@@ -114,22 +113,26 @@ void CreateFile(int fileNum, int numEntries, int numFields) {
    for (int i = 0; i < numEntries; i++) {
       auto entryPtr = writer->CreateEntry();
 
-      for (int numEntries = 0; j < numFields; j++) {
-         auto fldPtr = entryPtr->GetPtr<int>("Category" + std::to_string(i));
+      for (int j = 0; j < numFields; j++) {
+         auto fldPtr = entryPtr->GetPtr<int>("Category" + std::to_string(j));
 
          *fldPtr = 0;
       }
    }
 
-   // could also commit the "dataset" by destructing the writer, decide whether this makes sense, see if it makes a difference?
-   //writer.reset();
-   
+
+   //// test memory consumption output
+   //int *p = (int *)malloc(1024 * 100);
+   //memset(p, 1, 1024*100);
+
+
    // calculate memory usage by subtracting initial measurement from the current measurement
    long memFinal = get_mem_usage();
    long totalMemUsage = memFinal - memInit;
 
    // output results
-   std::cout << "the total memory usage for the function is: " << std::to_string(totalMemUsage) << std::endl;
+   std::cout << "numFields: " << numFields  << ", numEntries: " << numEntries << ", memUsage: " << std::to_string(totalMemUsage) << std::endl;
+   std::cout << numFields << "," << numEntries << "," << std::to_string(totalMemUsage) << std::endl;
    
    // write memory usage along with fileNum, numEntries, and numFields to previously made root file
    AppendReport("./reports/writing_report.root", fileNum, numEntries, numFields, totalMemUsage);
@@ -151,9 +154,8 @@ void mem_usage_vs_page_num() {
    int maxEntryNum = 4;
    int maxFieldNum = 5;
 
-   int numFiles = 15;
+   int fileNum = 15;
    //int numPages = 
-   int fileNum = 0; // will be done through iteration, or maybe swap out for numPages?
 
    CreateReport("./reports/writing_report.root");
    CreateReport("./reports/reading_report.root");
@@ -166,6 +168,6 @@ void mem_usage_vs_page_num() {
       }
    }
    
-   AnalyzeReport("./reports/writing_report.root");
-   AnalyzeReport("./reports/reading_report.root");
+   //AnalyzeReport("./reports/writing_report.root");
+   //AnalyzeReport("./reports/reading_report.root");
 }
