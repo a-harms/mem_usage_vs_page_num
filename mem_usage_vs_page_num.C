@@ -80,12 +80,12 @@ void AnalyzeReport(std::string fileName) {
    // Then need to fit plot here
 }
 
-void results_analysis() {
+void mem_usage_vs_page_num() {
 
    CreateReport("./reports/writing_report.root");
    CreateReport("./reports/reading_report.root");
 
-   gROOT->ProcessLine(".x read_write.C+");
+   gROOT->ProcessLine(".x read_write_record.C+");
 
    
 }

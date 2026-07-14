@@ -92,7 +92,7 @@ void ReadFile(int fileNum, int numEntries, int numFields) {
 
 
 
-void mem_usage_vs_page_num() {
+void read_write_record() {
    int maxEntryNum = 4;
    int maxFieldNum = 5;
 
