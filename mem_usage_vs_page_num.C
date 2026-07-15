@@ -43,11 +43,6 @@ void CreateReport(std::string fileName) {
    ROOT::RNTupleWriter::Recreate(std::move(model), "report", fileName);
 }
 
-
-void AppendReport(std::string fileName, int fileNum, int numEntries, int numFields, int MemUsage) {
-   // Functionality to be added yet
-}
-
 void AnalyzeReport(std::string fileName) {
    // Getting a unique pointer to an empty RNTuple model
    auto model = ROOT::RNTupleModel::Create();
