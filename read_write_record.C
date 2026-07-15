@@ -40,7 +40,7 @@ long get_mem_usage() {
 
 
 
-void CreateFile(int fileNum, int numEntries, int numFields) {
+void CreateFile(int numEntries, int numFields) {
    // get initial memory usage value
    long memInit = get_mem_usage();
    
@@ -53,7 +53,7 @@ void CreateFile(int fileNum, int numEntries, int numFields) {
    }
 
    // creates a root file and a page sink which the writer connects the model to
-   std::string fileName =  "./test_files/fileNum_" + std::to_string(fileNum);
+   std::string fileName =  "./test_files/numFields" + std::to_string(numFields) + "_numEntries" + std::to_string(numEntries);
    auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName);
 
 
@@ -83,7 +83,7 @@ void CreateFile(int fileNum, int numEntries, int numFields) {
 }
 
 
-void ReadFile(int fileNum, int numEntries, int numFields) {
+void ReadFile(int numEntries, int numFields) {
    // Create an empty RNTuple model and get a unique pointer to it
    auto model = ROOT::RNTupleModel::Create();
 
@@ -92,21 +92,13 @@ void ReadFile(int fileNum, int numEntries, int numFields) {
 
 
 
-void read_write_record() {
-   int maxEntryNum = 4;
-   int maxFieldNum = 5;
+void read_write_record(int numFields, int numEntries, std::string rw) {
 
-   int fileNum = 15;
-   //int numPages = 
-
-   for (int numFields = 1; numFields <= maxFieldNum; numFields++) {
-      for (int numEntries = 1; numEntries <= maxEntryNum; numEntries++) {
-
-         CreateFile(fileNum, numEntries, numFields);   
-         ReadFile(fileNum, numEntries, numFields);
-      }
+   if (std::strcmp(rw.c_str(), "w")==0) {
+      CreateFile(numEntries, numFields);
+   } else if (std::strcmp(rw.c_str(), "r")==0) {
+      ReadFile(numEntries, numFields);
+   } else {
+      std::cout << "Incorrect arguments provided. Please review the required command line options and arguments." << std::endl;
    }
-   
-   //AnalyzeReport("./reports/writing_report.root");
-   //AnalyzeReport("./reports/reading_report.root");
 }

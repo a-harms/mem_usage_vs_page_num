@@ -81,11 +81,21 @@ void AnalyzeReport(std::string fileName) {
 }
 
 void mem_usage_vs_page_num() {
+   int maxFieldNum = 2;
+   int maxEntryNum = 2;
 
    CreateReport("./reports/writing_report.root");
    CreateReport("./reports/reading_report.root");
 
-   gROOT->ProcessLine(".x read_write_record.C+");
+   for (int numFields = 1; numFields <= maxFieldNum; numFields++) {
+      for (int numEntries = 1; numEntries <= maxEntryNum; numEntries++) {
 
-   
+         std::string writeLine = ".x read_write_record.C(" + std::to_string(numFields) + ", " + std::to_string(numEntries) + ", \"w\")";
+         std::string readLine = ".x read_write_record.C(" + std::to_string(numFields) + ", " + std::to_string(numEntries) + ", \"r\")";
+
+         gROOT->ProcessLine(writeLine.c_str());
+         gROOT->ProcessLine(readLine.c_str());
+      }
+   }
+
 }
