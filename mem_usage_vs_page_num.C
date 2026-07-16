@@ -79,8 +79,8 @@ void mem_usage_vs_page_num() {
    int maxFieldNum = 2;
    int maxEntryNum = 2;
 
-   CreateReport("./reports/writing_report.root");
-   CreateReport("./reports/reading_report.root");
+   //CreateReport("./reports/writing_report.root");
+   //CreateReport("./reports/reading_report.root");
 
    for (int numFields = 1; numFields <= maxFieldNum; numFields++) {
       for (int numEntries = 1; numEntries <= maxEntryNum; numEntries++) {

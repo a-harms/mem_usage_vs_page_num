@@ -21,15 +21,17 @@
 #include <utility>
 
 
-#include <list>
-
-// For memory tracking
+// For resident set size tracking
 #include <sys/time.h>
 #include <sys/resource.h>
 
+// For virtual memory tracking
+#include <sys/types.h>
+#include <sys/sysinfo.h>
 
+#include <cstddef>
 
-// for memory tracking
+// for resident set size tracking
 long get_mem_usage() {
     struct rusage usage;
     int ret;
@@ -38,11 +40,51 @@ long get_mem_usage() {
 }
 
 
+// returns the virtual set size in kB
+long get_vss() {
+   long vss;
+   std::string line;
+
+   ifstream statusFile("/proc/self/status");
+
+   while (statusFile.good()) {
+      if (statusFile.is_open()) {
+         // Iterate through the different lines of the /proc/self/status file
+         getline(statusFile, line);
+
+         // Get the label for the listed value
+         std::string delimiter = ":";
+         size_t position = line.find(delimiter);
+         std::string label = line.substr(0, position);
+
+         // Check to see if the line contains one of the sought out values and extract them if so
+         if ((label.compare("VmSize")) == 0) {
+            line.erase(0, position + delimiter.length());
+
+            // remove the trailing " kB" characters from the line
+            line.erase((line.length() - 3), 3);
+
+            // trim leading space before digits 0-9
+            line.erase(0, line.find_first_of("123456790"));
+
+            vss = stoul(line);
+         }
+
+      } else {
+         std::cout << "Error opening status file" << std::endl;
+      }
+   }
+   statusFile.close();
+
+   return vss;
+}
+
 
 
 void CreateFile(int numEntries, int numFields) {
    // get initial memory usage value
    long memInit = get_mem_usage();
+   long vssInit = get_vss();
    
    // Creating a unique pointer to an empty data model
    auto model = ROOT::RNTupleModel::Create();
@@ -76,10 +118,14 @@ void CreateFile(int numEntries, int numFields) {
 
    // calculate memory usage by subtracting initial measurement from the current measurement
    long memFinal = get_mem_usage();
+   long vssFinal = get_vss();
+
    long totalMemUsage = memFinal - memInit;
+   long totalVssUsage = vssFinal - vssInit;
 
    // output results
-   std::cout << "numFields: " << numFields  << ", numEntries: " << numEntries << ", memUsage: " << std::to_string(totalMemUsage) << std::endl;
+   std::cout << "numFields: " << numFields  << ", numEntries: " << numEntries << ", memUsage: " << std::to_string(totalMemUsage)
+             << ", vss: " << totalVssUsage << std::endl;
 }
 
 
