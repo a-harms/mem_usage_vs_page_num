@@ -29,7 +29,7 @@
 #include <sys/types.h>
 #include <sys/sysinfo.h>
 
-#include <cstddef>
+//#include <cstddef>
 
 // for resident set size tracking
 long get_mem_usage() {
@@ -42,7 +42,7 @@ long get_mem_usage() {
 
 // returns the virtual set size in kB
 long get_vss() {
-   long vss;
+   long vss = 0;
    std::string line;
 
    ifstream statusFile("/proc/self/status");
@@ -75,13 +75,20 @@ long get_vss() {
       }
    }
    statusFile.close();
-
    return vss;
 }
 
 
 
 void CreateFile(int numEntries, int numFields) {
+
+   // Create and open csv file for recording memory usage statistics for given parameters
+   std::ofstream csvRunRecord;
+   std::string csvFileName = "write_" + std::to_string(numFields) + "_" + std::to_string(numFields);
+   csvRunRecord.open(csvFileName);
+
+   csvRunRecord << "numFields,numEntries,vss,rss" << std::endl;
+
    // get initial memory usage value
    long memInit = get_mem_usage();
    long vssInit = get_vss();
@@ -90,7 +97,7 @@ void CreateFile(int numEntries, int numFields) {
    auto model = ROOT::RNTupleModel::Create();
 
    // Defining the data model
-   for (int i = 0; i < numFields; i++) {
+   for (int i = 1; i <= numFields; i++) {
       auto fldPtr = model->MakeField<int>("Category" + std::to_string(i));
    }
 
@@ -99,34 +106,28 @@ void CreateFile(int numEntries, int numFields) {
    auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName);
 
 
+   // Do an initial save of memory usage statistics and run information to csv file
+   csvRunRecord << numFields << "," << 0 << "," << get_vss() << "," << get_mem_usage() << std::endl;
+
    // Write entries to data model
-   for (int i = 0; i < numEntries; i++) {
+   for (int i = 1; i <= numEntries; i++) {
       auto entryPtr = writer->CreateEntry();
 
-      for (int j = 0; j < numFields; j++) {
+      for (int j = 1; j <= numFields; j++) {
          auto fldPtr = entryPtr->GetPtr<int>("Category" + std::to_string(j));
 
          *fldPtr = 0;
       }
+      // Save memory usage statistics and run information to csv file
+      csvRunRecord << numFields << "," << i << "," << get_vss() << "," << get_mem_usage() << std::endl;
+
+      writer->Fill();
    }
 
-
-   //// test memory consumption output
-   //int *p = (int *)malloc(1024 * 100);
-   //memset(p, 1, 1024*100);
-
-
-   // calculate memory usage by subtracting initial measurement from the current measurement
-   long memFinal = get_mem_usage();
-   long vssFinal = get_vss();
-
-   long totalMemUsage = memFinal - memInit;
-   long totalVssUsage = vssFinal - vssInit;
-
-   // output results
-   std::cout << "numFields: " << numFields  << ", numEntries: " << numEntries << ", memUsage: " << std::to_string(totalMemUsage)
-             << ", vss: " << totalVssUsage << std::endl;
+   // Close csv record file for this run
+   csvRunRecord.close();
 }
+
 
 
 void ReadFile(int numEntries, int numFields) {
