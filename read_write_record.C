@@ -101,9 +101,17 @@ void CreateFile(int runNum, int numEntries, int numFields) {
       auto fldPtr = model->MakeField<int>("Category" + std::to_string(i));
    }
 
+   // Create options object in order to edit the write rntuple options
+   auto options = ROOT::RNTupleWriteOptions();
+   
+   // Set the page size based on the field data types such that there is one entry per page
+   std::size_t pageSize = sizeof(int);
+   options.SetInitialUnzippedPageSize(pageSize);
+   options.SetMaxUnzippedPageSize(pageSize);
+
    // creates a root file and a page sink which the writer connects the model to
    std::string fileName =  "./test_files/numFields" + std::to_string(numFields) + "_numEntries" + std::to_string(numEntries);
-   auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName);
+   auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName, options);
 
 
    // Do an initial save of memory usage statistics and run information to csv file
@@ -137,7 +145,6 @@ void ReadFile(int runNum, int numEntries, int numFields) {
 
 
 void read_write_record(int runNum, int numFields, int numEntries, std::string rw) {
-
    if (std::strcmp(rw.c_str(), "w")==0) {
       runInformationRecord("./csv_records/groupRecord/writeGroupRecord.csv", runNum, numFields, numEntries);
       CreateFile(runNum, numEntries, numFields);
