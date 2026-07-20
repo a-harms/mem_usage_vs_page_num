@@ -69,7 +69,6 @@ long get_vss() {
          std::cout << "Error opening status file" << std::endl;
       }
    }
-   statusFile.close();
    return vss;
 }
 
@@ -124,11 +123,6 @@ void CreateFile(int runNum, int numEntries, int numFields) {
 
       writer->Fill();
    }
-
-   // Close csv record file for this run
-   csvRunRecord.close();
-
-   
 }
 
 
