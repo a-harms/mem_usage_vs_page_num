@@ -48,7 +48,3 @@
 
 
 ### Project specific files
-
-# All output files
-test_files/*
-reports/*
