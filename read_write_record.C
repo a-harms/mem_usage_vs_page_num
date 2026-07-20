@@ -25,11 +25,6 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-// For virtual memory tracking
-#include <sys/types.h>
-#include <sys/sysinfo.h>
-
-//#include <cstddef>
 
 // for resident set size tracking
 long get_mem_usage() {
