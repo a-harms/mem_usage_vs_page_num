@@ -79,19 +79,25 @@ long get_vss() {
 }
 
 
+void runInformationRecord(std::string csvFileName, int runNum, int numFields, int numEntries) {
+   // Open csv file for recording memory usage statistics for the run group
+   std::ofstream csvRunGroupRecord;
+   csvRunGroupRecord.open(csvFileName, std::ios_base::app);
 
-void CreateFile(int numEntries, int numFields) {
+   // Record information for this specific run to run group csv file
+   csvRunGroupRecord << runNum << "," << numFields << "," << numEntries << std::endl;
+}
 
-   // Create and open csv file for recording memory usage statistics for given parameters
+
+
+void CreateFile(int runNum, int numEntries, int numFields) {
+   // Create and open csv file for recording memory usage statistics for given run
    std::ofstream csvRunRecord;
-   std::string csvFileName = "write_" + std::to_string(numFields) + "_" + std::to_string(numFields);
+   std::string csvFileName = "./csv_records/groupRecord/write_" + std::to_string(runNum);
    csvRunRecord.open(csvFileName);
 
-   csvRunRecord << "numFields,numEntries,vss,rss" << std::endl;
-
-   // get initial memory usage value
-   long memInit = get_mem_usage();
-   long vssInit = get_vss();
+   // Write header row to run specific csv record file
+   csvRunRecord << "runNum,EntryNum,vss,rss" << std::endl;
    
    // Creating a unique pointer to an empty data model
    auto model = ROOT::RNTupleModel::Create();
@@ -107,7 +113,7 @@ void CreateFile(int numEntries, int numFields) {
 
 
    // Do an initial save of memory usage statistics and run information to csv file
-   csvRunRecord << numFields << "," << 0 << "," << get_vss() << "," << get_mem_usage() << std::endl;
+   csvRunRecord << runNum << "," << 0 << "," << get_vss() << "," << get_mem_usage() << std::endl;
 
    // Write entries to data model
    for (int i = 1; i <= numEntries; i++) {
@@ -119,18 +125,20 @@ void CreateFile(int numEntries, int numFields) {
          *fldPtr = 0;
       }
       // Save memory usage statistics and run information to csv file
-      csvRunRecord << numFields << "," << i << "," << get_vss() << "," << get_mem_usage() << std::endl;
+      csvRunRecord << runNum << "," << i << "," << get_vss() << "," << get_mem_usage() << std::endl;
 
       writer->Fill();
    }
 
    // Close csv record file for this run
    csvRunRecord.close();
+
+   
 }
 
 
 
-void ReadFile(int numEntries, int numFields) {
+void ReadFile(int runNum, int numEntries, int numFields) {
    // Create an empty RNTuple model and get a unique pointer to it
    auto model = ROOT::RNTupleModel::Create();
 
@@ -139,12 +147,14 @@ void ReadFile(int numEntries, int numFields) {
 
 
 
-void read_write_record(int numFields, int numEntries, std::string rw) {
+void read_write_record(int runNum, int numFields, int numEntries, std::string rw) {
 
    if (std::strcmp(rw.c_str(), "w")==0) {
-      CreateFile(numEntries, numFields);
+      runInformationRecord("./csv_records/groupRecord/writeGroupRecord.csv", runNum, numFields, numEntries);
+      CreateFile(runNum, numEntries, numFields);
    } else if (std::strcmp(rw.c_str(), "r")==0) {
-      ReadFile(numEntries, numFields);
+      runInformationRecord("./csv_records/groupRecord/readGroupRecord.csv", runNum, numFields, numEntries);
+      ReadFile(runNum, numEntries, numFields);
    } else {
       std::cout << "Incorrect arguments provided. Please review the required command line options and arguments." << std::endl;
    }
