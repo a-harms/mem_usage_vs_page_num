@@ -117,11 +117,13 @@ void CreateFile(int runNum, int numEntries, int numFields) {
    // Do an initial save of memory usage statistics and run information to csv file
    csvRunRecord << runNum << "," << 0 << "," << get_vss() << "," << get_mem_usage() << std::endl;
 
+   // Create entry pointer to use for loading in and writing entries
+   auto entryPtr = writer->CreateEntry();
+
    // Write entries to data model
    for (int i = 1; i <= numEntries; i++) {
-      auto entryPtr = writer->CreateEntry();
-
       for (int j = 1; j <= numFields; j++) {
+         // Create a field pointer so that the different fields of the current entry can be populated
          auto fldPtr = entryPtr->GetPtr<int>("Category" + std::to_string(j));
 
          *fldPtr = 0;
@@ -129,6 +131,7 @@ void CreateFile(int runNum, int numEntries, int numFields) {
       // Save memory usage statistics and run information to csv file
       csvRunRecord << runNum << "," << i << "," << get_vss() << "," << get_mem_usage() << std::endl;
 
+      // Fill the entry into the ntuple
       writer->Fill();
    }
 }
