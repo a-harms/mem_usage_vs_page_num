@@ -143,7 +143,6 @@ void ReadFile(int runNum, int numEntries, int numFields) {
 }
 
 
-
 void read_write_record(int runNum, int numFields, int numEntries, std::string rw) {
    if (std::strcmp(rw.c_str(), "w")==0) {
       runInformationRecord("./csv_records/groupRecord/writeGroupRecord.csv", runNum, numFields, numEntries);
