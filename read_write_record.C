@@ -151,7 +151,6 @@ void read_write_record(int runNum, int numFields, int numEntries, std::string rw
       runInformationRecord("./csv_records/groupRecord/writeGroupRecord.csv", runNum, numFields, numEntries);
       CreateFile(runNum, numEntries, numFields);
    } else if (std::strcmp(rw.c_str(), "r")==0) {
-      runInformationRecord("./csv_records/groupRecord/readGroupRecord.csv", runNum, numFields, numEntries);
       ReadFile(runNum, numEntries, numFields);
    } else {
       std::cout << "Incorrect arguments provided. Please review the required command line options and arguments." << std::endl;

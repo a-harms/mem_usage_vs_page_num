@@ -14,11 +14,9 @@ mkdir ./csv_records/groupRecord
 
 # Make csv record files for run group
 touch ./csv_records/groupRecord/writeGroupRecord.csv
-touch ./csv_records/groupRecord/readGroupRecord.csv
 
 # Enter header row for run group csv record files
 echo "runNum,numFields,numEntries" > ./csv_records/groupRecord/writeGroupRecord.csv
-echo "runNum,numFields,numEntries" > ./csv_records/groupRecord/readGroupRecord.csv
 
 
 runNum="0"
