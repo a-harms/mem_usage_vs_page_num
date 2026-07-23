@@ -25,9 +25,9 @@ struct runInfo {
    int numEntries;
 };
 
-void AnalyzeResults(std::string csvRunGroupRecordName) {
-   // Creating empty map for accessing run information using run number
-   map<int, runInfo> runNumToRunInfo;
+std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordName) {
+   // Creating empty map to be filled and returned later
+   std::map<int, runInfo> runNumToRunInfo;
 
    // Strings and characters for parsing csv file
    std::string line;
@@ -73,15 +73,16 @@ void AnalyzeResults(std::string csvRunGroupRecordName) {
             // Add new element with run information to runNumToRunInfo map with runNum as key
             runNumToRunInfo[runNum] = tempInfoLoader;
          }
-
       } else {
          std::cout << "Run Group Record CSV file not open." << std::endl;
      }
    }
+   return runNumToRunInfo;
 }
 
 
-
 void analyze(std::string csvRunGroupRecordName, std::string rw) {
-   AnalyzeResults(csvRunGroupRecordName);
+   // Parsing run group record csv file and creating map for accessing run information using run number
+   std::map<int, runInfo> runNumToRunInfo = LoadMap(csvRunGroupRecordName);
+
 }
