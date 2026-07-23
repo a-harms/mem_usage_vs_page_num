@@ -35,5 +35,5 @@ for (( i = 1; i <= "$upperIterLimit"; i++ )); do
    root -q read_write_record.C+("${runNum}", "${numFields}", "${numEntries}", \"r\")
 done
 
-root -q analyze.C+(\"./csv_records/groupRecord/writeGroupRecord.csv\", \"w\")
-root -q analyze.C+(\"./csv_records/groupRecord/writeGroupRecord.csv\", \"r\")
+root -q analyze.C+(\"./csv_records/groupRecord/\", \"w\")
+root -q analyze.C+(\"./csv_records/groupRecord/\", \"r\")

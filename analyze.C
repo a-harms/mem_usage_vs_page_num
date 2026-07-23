@@ -20,12 +20,14 @@
 
 #include <map>
 
+
 struct runInfo {
    int numFields;
    int numEntries;
 };
 
-std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordName) {
+
+std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
    // Creating empty map to be filled and returned later
    std::map<int, runInfo> runNumToRunInfo;
 
@@ -40,6 +42,7 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordName) {
    int numEntries;
 
    // Initialize input file stream for run group record csv file
+   std::string csvRunGroupRecordName = csvRunGroupRecordDirectory + "groupRecord.csv";
    std::ifstream csvRunGroupRecord(csvRunGroupRecordName);
 
    // Remove header row from group record csv file
@@ -70,6 +73,13 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordName) {
             tempInfoLoader.numFields = numFields;
             tempInfoLoader.numEntries = numEntries;
 
+
+            // Load in memory usage profile as RDataFrame
+            std::string runRecordFile = csvRunGroupRecordDirectory + "write_" + std::to_string(runNum);
+            auto df = ROOT::RDF::FromCSV(runRecordFile);
+
+
+
             // Add new element with run information to runNumToRunInfo map with runNum as key
             runNumToRunInfo[runNum] = tempInfoLoader;
          }
@@ -81,8 +91,8 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordName) {
 }
 
 
-void analyze(std::string csvRunGroupRecordName, std::string rw) {
+void analyze(std::string csvRunGroupRecordDirectory, std::string rw) {
    // Parsing run group record csv file and creating map for accessing run information using run number
-   std::map<int, runInfo> runNumToRunInfo = LoadMap(csvRunGroupRecordName);
+   std::map<int, runInfo> runNumToRunInfo = LoadMap(csvRunGroupRecordDirectory);
 
 }
