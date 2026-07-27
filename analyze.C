@@ -108,39 +108,35 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
 }
 
 
-void PlotParameterGroups(map<int, runInfo> runNumToRunInfo) {
-   int maxEntryNum = 10; // will either have to be given as a paramater, or found by iterating/searching through the map
-   int maxFieldNum = 10; // will either have to be given as a paramater, or found by iterating/searching through the map
+void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
+   // Find the max numFields and numEntries values assuming that they are held by the last runNumToRunInfo map entry value
+   auto lastMapPair = std::prev(runNumToRunInfo.end());
+   int maxFieldNum = lastMapPair->second.numFields;
+   int maxEntryNum = lastMapPair->second.numEntries;
 
-   // Iterate over all possible parameter combinations in order to find groups of runs with the same parameters
+   // 
    for (int i = 1; i <= maxFieldNum; i++) {
-      for (int j = 1; j <= maxEntryNum; i++) {
+      for (int j = 1; j <= maxEntryNum; j++) {
 
-         list<int> runNums;
-
-         // Traverse map to find runs with correct numFields and numEntries parameter values
-         for (auto const& rI : runNumToRunInfo) {
-            if (rI.second.numFields == i && rI.second.numEntries == j) {
-               // If the run has the correct parameters, add it to the current runNums list
-               runNums.push_back(rI.first);
-               std::cout << rI.first << std::endl;
+         for (auto const& ri : runNumToRunInfo) {
+            if (ri.second.numFields == i && ri.second.numEntries == j) {
+               std::cout << ri.first << ": " << ri.second.numFields << "  " << ri.second.numEntries << std::endl;
             }
          }
 
-         // Iterate over runs with correct numFields and numEntries parameter values
-         for (auto const& runNum : runNums) {
-            std::cout << runNum << std::endl;
-         }
       }
    }
+
+
+   
 }
+
 
 
 void analyze(std::string csvRunGroupRecordDirectory, std::string rw) {
    // Parsing run group record csv file and creating map for accessing run information using run number
    std::map<int, runInfo> runNumToRunInfo = LoadMap(csvRunGroupRecordDirectory);
 
-   // Traverse previously created map and make plots for runs with the same parameters
-   //PlotParameterGroups(runNumToRunInfo);
-
+   // Traverse previously created map and make plots for the run group
+   GenerateGroupPlots(runNumToRunInfo);
 }
