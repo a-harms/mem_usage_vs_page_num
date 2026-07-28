@@ -4,6 +4,8 @@
 #include <ROOT/RDataFrame.hxx>
 #include <ROOT/RCsvDS.hxx>
 
+#include <TFrame.h>
+#include <TGraph.h>
 #include <TCanvas.h>
 #include <TH1I.h>
 #include <TROOT.h>
@@ -19,8 +21,10 @@
 #include <utility>
 
 #include <map>
-#include <list>
+#include <numeric>
 
+
+//#include <TH1F.h>
 
 struct runInfo {
    int numFields;
@@ -31,6 +35,11 @@ struct runInfo {
    int minRss;
    int maxRss;
 };
+
+
+long long mean(std::vector<long long> const& vec) {
+   return std::accumulate(vec.begin(), vec.end(), 0LL) / (long long) vec.size();
+}
 
 
 std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
@@ -114,24 +123,62 @@ void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
    int maxFieldNum = lastMapPair->second.numFields;
    int maxEntryNum = lastMapPair->second.numEntries;
 
-   // 
+   // Create empty graphs for plotting memory usage plots
+   auto gr1 = new TGraph();
+   auto gr2 = new TGraph();
+
+
+   // Iterate over possible numFields and numEntries parameter values
    for (int i = 1; i <= maxFieldNum; i++) {
       for (int j = 1; j <= maxEntryNum; j++) {
 
+         vector<int> parameterGroupRuns;
+
+         // Traverse runNumToRunInfo map in order to find groups of runs with identical numFields and numEntries parameter values
          for (auto const& ri : runNumToRunInfo) {
+            // Track the runNum if the parameters belong to the current parameter group iteration
             if (ri.second.numFields == i && ri.second.numEntries == j) {
-               std::cout << ri.first << ": " << ri.second.numFields << "  " << ri.second.numEntries << std::endl;
+               parameterGroupRuns.push_back(ri.first);
             }
          }
 
+         // If there is a group of runs with the current parameter iteration, iterate over them and extract average values
+         if (parameterGroupRuns.size() != 0) {
+
+            vector<long long> maxRssValues;
+            vector<long long> maxVssValues;
+
+            // Iterate over the parameter run group and track relevant values
+            for (auto const& ri : parameterGroupRuns) {
+               maxRssValues.push_back((long long)runNumToRunInfo[ri].maxRss);
+               maxVssValues.push_back((long long)runNumToRunInfo[ri].maxVss);
+            }
+
+            // Get the average values for the current parameter iteration/group
+            long long avgMaxRss = mean(maxRssValues);
+            long long avgMaxVss = mean(maxVssValues);
+
+            // Calculate the number of pages given the current iteration of input parameters
+            int numPages = j * i;
+
+            // Save the average values along with the number of pages for the files as points in their appropriate graphs
+            gr1->AddPoint(numPages, avgMaxRss);
+            gr2->AddPoint(numPages, avgMaxVss);
+         }
       }
    }
 
+   // Plot the results
+   gr1->SetTitle("Average max rss values");
+   gr1->GetXaxis()->SetTitle("Number of pages in file");
+   gr1->GetYaxis()->SetTitle("Average max rss value for parameter set (kb)");
+   gr1->Draw("AC*");
 
-   
+   gr2->SetTitle("Average max vss values");
+   gr2->GetXaxis()->SetTitle("Number of pages in file");
+   gr2->GetYaxis()->SetTitle("Average max vss value for parameter set (kb)");
+   gr2->Draw("AC*");
 }
-
-
 
 void analyze(std::string csvRunGroupRecordDirectory, std::string rw) {
    // Parsing run group record csv file and creating map for accessing run information using run number
