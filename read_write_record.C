@@ -79,7 +79,7 @@ void runInformationRecord(std::string csvFileName, int runNum, int numFields, in
    csvRunGroupRecord.open(csvFileName, std::ios_base::app);
 
    // Determine the current file name for the pertinent run
-   std::string fileName =  "./test_files/numFields" + std::to_string(numFields) + "_numEntries" + std::to_string(numEntries);
+   std::string fileName =  "./test_files/" + std::to_string(runNum) + ".root";
 
    // Retrieve the number of clusters used in teh particular run
    int numClusters = ROOT::RNTupleReader::Open("blank", fileName)->GetDescriptor().GetNClusters();
@@ -116,7 +116,7 @@ void CreateFile(int runNum, int numEntries, int numFields) {
    options.SetMaxUnzippedPageSize(pageSize);
 
    // creates a root file and a page sink which the writer connects the model to
-   std::string fileName =  "./test_files/numFields" + std::to_string(numFields) + "_numEntries" + std::to_string(numEntries);
+   std::string fileName =  "./test_files/" + std::to_string(runNum) + ".root";
    auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName, options);
 
 
@@ -154,10 +154,11 @@ void ReadFile(int runNum, int numEntries, int numFields) {
 
 void read_write_record(int runNum, int numFields, int numEntries, std::string rw) {
    if (std::strcmp(rw.c_str(), "w")==0) {
-      runInformationRecord("./csv_records/groupRecord/groupRecord.csv", runNum, numFields, numEntries);
       CreateFile(runNum, numEntries, numFields);
+      runInformationRecord("./csv_records/groupRecord/groupRecord.csv", runNum, numFields, numEntries);
    } else if (std::strcmp(rw.c_str(), "r")==0) {
-      ReadFile(runNum, numEntries, numFields);
+      //ReadFile(runNum, numEntries, numFields);
+      //runInformationRecord("./csv_records/groupRecord/groupRecord.csv", runNum, numFields, numEntries);
    } else {
       std::cout << "Incorrect arguments provided. Please review the required command line options and arguments." << std::endl;
    }
