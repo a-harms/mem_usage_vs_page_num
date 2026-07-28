@@ -29,6 +29,7 @@
 struct runInfo {
    int numFields;
    int numEntries;
+   int numClusters;
 
    int minVss;
    int maxVss;
@@ -55,6 +56,7 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
    int runNum;
    int numFields;
    int numEntries;
+   int numClusters;
 
    // Initialize input file stream for run group record csv file
    std::string csvRunGroupRecordName = csvRunGroupRecordDirectory + "groupRecord.csv";
@@ -84,9 +86,13 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
             std::getline(lineStream, cell, delimiter);
             numEntries = std::stoi(cell);
 
+            std::getline(lineStream, cell, delimiter);
+            numClusters = std::stoi(cell);
+
             // Load the extracted values into the temporary struct
             tempInfoLoader.numFields = numFields;
             tempInfoLoader.numEntries = numEntries;
+            tempInfoLoader.numClusters = numClusters;
 
 
             // Load in memory usage profile as RDataFrame
@@ -126,6 +132,7 @@ void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
    // Create empty graphs for plotting memory usage plots
    auto gr1 = new TGraph();
    auto gr2 = new TGraph();
+   auto gr3 = new TGraph();
 
 
    // Iterate over possible numFields and numEntries parameter values
@@ -147,16 +154,19 @@ void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
 
             vector<long long> maxRssValues;
             vector<long long> maxVssValues;
+            vector<long long> numClustersValues;
 
             // Iterate over the parameter run group and track relevant values
             for (auto const& ri : parameterGroupRuns) {
                maxRssValues.push_back((long long)runNumToRunInfo[ri].maxRss);
                maxVssValues.push_back((long long)runNumToRunInfo[ri].maxVss);
+               numClustersValues.push_back((long long)runNumToRunInfo[ri].numClusters);
             }
 
             // Get the average values for the current parameter iteration/group
             long long avgMaxRss = mean(maxRssValues);
             long long avgMaxVss = mean(maxVssValues);
+            long long avgNumClusters = mean(numClustersValues);
 
             // Calculate the number of pages given the current iteration of input parameters
             int numPages = j * i;
@@ -164,20 +174,26 @@ void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
             // Save the average values along with the number of pages for the files as points in their appropriate graphs
             gr1->AddPoint(numPages, avgMaxRss);
             gr2->AddPoint(numPages, avgMaxVss);
+            gr3->AddPoint(numPages, avgNumClusters);
          }
       }
    }
 
    // Plot the results
    gr1->SetTitle("Average max rss values");
-   gr1->GetXaxis()->SetTitle("Number of pages in file");
+   gr1->GetXaxis()->SetTitle("Number of pages per file");
    gr1->GetYaxis()->SetTitle("Average max rss value for parameter set (kb)");
    gr1->Draw("AC*");
 
    gr2->SetTitle("Average max vss values");
-   gr2->GetXaxis()->SetTitle("Number of pages in file");
+   gr2->GetXaxis()->SetTitle("Number of pages per file");
    gr2->GetYaxis()->SetTitle("Average max vss value for parameter set (kb)");
    gr2->Draw("AC*");
+
+   gr3->SetTitle("Average numClusters versus numPages");
+   gr3->GetXaxis()->SetTitle("Number of pages per file");
+   gr3->GetYaxis()->SetTitle("Number of clusters written to file");
+   gr3->Draw("AC*");
 }
 
 void analyze(std::string csvRunGroupRecordDirectory, std::string rw) {

@@ -8,7 +8,7 @@ shopt -s extglob
 runGroupDirectory="./csv_records/groupRecord/"
 csvRunGroupRecord="groupRecord.csv"
 
-upperIterLimit="10"
+upperIterLimit="50"
 iterRepeatFactor="3"
 
 
@@ -21,7 +21,7 @@ mkdir "${runGroupDirectory}"
 
 # Make csv record file and enter header row for run group csv record files
 touch "${runGroupDirectory}""${csvRunGroupRecord}"
-echo "runNum,numFields,numEntries" > "${runGroupDirectory}""${csvRunGroupRecord}"
+echo "runNum,numFields,numEntries,numClusters" > "${runGroupDirectory}""${csvRunGroupRecord}"
 
 
 runNum="0"
@@ -39,4 +39,4 @@ for (( i = 1; i <= "$upperIterLimit"; i++ )); do
 done
 
 root -q analyze.C+(\"./csv_records/groupRecord/\", \"w\")
-root -q analyze.C+(\"./csv_records/groupRecord/\", \"r\")
+#root -q analyze.C+(\"./csv_records/groupRecord/\", \"r\")

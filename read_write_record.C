@@ -78,8 +78,14 @@ void runInformationRecord(std::string csvFileName, int runNum, int numFields, in
    std::ofstream csvRunGroupRecord;
    csvRunGroupRecord.open(csvFileName, std::ios_base::app);
 
+   // Determine the current file name for the pertinent run
+   std::string fileName =  "./test_files/numFields" + std::to_string(numFields) + "_numEntries" + std::to_string(numEntries);
+
+   // Retrieve the number of clusters used in teh particular run
+   int numClusters = ROOT::RNTupleReader::Open("blank", fileName)->GetDescriptor().GetNClusters();
+
    // Record information for this specific run to run group csv file
-   csvRunGroupRecord << runNum << "," << numFields << "," << numEntries << std::endl;
+   csvRunGroupRecord << runNum << "," << numFields << "," << numEntries << "," << numClusters << std::endl;
 }
 
 
