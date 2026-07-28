@@ -1,0 +1,4 @@
+# Ignore all output files in this directory
+*
+# Include this .gitignore file
+!.gitignore
