@@ -73,9 +73,10 @@ long get_vss() {
 }
 
 
-void runInformationRecord(std::string csvFileName, int runNum, int numFields, int numEntries) {
+void runInformationRecord(std::string runGroupDirectory, int runNum, int numFields, int numEntries) {
    // Open csv file for recording memory usage statistics for the run group
    std::ofstream csvRunGroupRecord;
+   std::string csvFileName = runGroupDirectory + "groupRecord.csv";
    csvRunGroupRecord.open(csvFileName, std::ios_base::app);
 
    // Determine the current file name for the pertinent run
@@ -90,10 +91,10 @@ void runInformationRecord(std::string csvFileName, int runNum, int numFields, in
 
 
 
-void CreateFile(int runNum, int numEntries, int numFields) {
+void CreateFile(std::string runGroupDirectory, int runNum, int numEntries, int numFields) {
    // Create and open csv file for recording memory usage statistics for given run
    std::ofstream csvRunRecord;
-   std::string csvFileName = "./csv_records/groupRecord/write_" + std::to_string(runNum);
+   std::string csvFileName = runGroupDirectory + "write_" + std::to_string(runNum);
    csvRunRecord.open(csvFileName);
 
    // Write header row to run specific csv record file
@@ -157,10 +158,10 @@ void ReadFile(int runNum, int numEntries, int numFields) {
 }
 
 
-void read_write_record(int runNum, int numFields, int numEntries, std::string rw) {
+void read_write_record(std::string runGroupDirectory, int runNum, int numFields, int numEntries, std::string rw) {
    if (std::strcmp(rw.c_str(), "w")==0) {
-      CreateFile(runNum, numEntries, numFields);
-      runInformationRecord("./csv_records/groupRecord/groupRecord.csv", runNum, numFields, numEntries);
+      CreateFile(runGroupDirectory, runNum, numEntries, numFields);
+      runInformationRecord(runGroupDirectory, runNum, numFields, numEntries);
    } else if (std::strcmp(rw.c_str(), "r")==0) {
       //ReadFile(runNum, numEntries, numFields);
       //runInformationRecord("./csv_records/groupRecord/groupRecord.csv", runNum, numFields, numEntries);
