@@ -115,6 +115,11 @@ void CreateFile(int runNum, int numEntries, int numFields) {
    options.SetInitialUnzippedPageSize(pageSize);
    options.SetMaxUnzippedPageSize(pageSize);
 
+   // Set the maximum cluster size to be smaller (64 kB) in order to reduce the group run time
+   std::size_t clusterSize = 64000;
+   options.SetApproxZippedClusterSize(clusterSize);
+   options.SetMaxUnzippedClusterSize(clusterSize);
+
    // creates a root file and a page sink which the writer connects the model to
    std::string fileName =  "./test_files/" + std::to_string(runNum) + ".root";
    auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName, options);
