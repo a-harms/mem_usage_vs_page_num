@@ -129,6 +129,10 @@ void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
    int maxFieldNum = lastMapPair->second.numFields;
    int maxEntryNum = lastMapPair->second.numEntries;
 
+   // TCanvas
+   auto c = new TCanvas("c", "Something here", 0, 0, 1800, 600);
+   c->Divide(3);
+
    // Create empty graphs for plotting memory usage plots
    auto gr1 = new TGraph();
    auto gr2 = new TGraph();
@@ -180,20 +184,35 @@ void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
    }
 
    // Plot the results
+
+   // Plot the average maximum rss versus the number of pages per file
+   c->cd(1);
+   gPad->SetGrid();
    gr1->SetTitle("Average max rss values");
    gr1->GetXaxis()->SetTitle("Number of pages per file");
    gr1->GetYaxis()->SetTitle("Average max rss value for parameter set (kb)");
    gr1->Draw("AC*");
 
+   // Plot the average maximum vss versus the number of pages per file
+   c->cd(2);
+   gPad->SetGrid();
    gr2->SetTitle("Average max vss values");
    gr2->GetXaxis()->SetTitle("Number of pages per file");
    gr2->GetYaxis()->SetTitle("Average max vss value for parameter set (kb)");
    gr2->Draw("AC*");
 
+   // Plot the average number of clusters per file versus the number of pages per file
+   c->cd(3);
+   gPad->SetGrid();
    gr3->SetTitle("Average numClusters versus numPages");
    gr3->GetXaxis()->SetTitle("Number of pages per file");
    gr3->GetYaxis()->SetTitle("Number of clusters written to file");
    gr3->Draw("AC*");
+
+   // Force the graphics to be rendered to the TCanvas and then save as a pdf
+   c->Modified();
+   c->Update();
+   c->SaveAs("./output_plots/groupPlots/results.pdf");
 }
 
 void analyze(std::string csvRunGroupRecordDirectory, std::string rw) {
