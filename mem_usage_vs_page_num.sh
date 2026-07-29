@@ -9,7 +9,7 @@ runGroupDirectory="./csv_records/groupRecord/"
 csvRunGroupRecord="groupRecord.csv"
 
 upperIterLimit="50"
-iterRepeatFactor="3"
+iterRepeatFactor="2"
 
 
 
@@ -30,8 +30,8 @@ for (( i = 1; i <= "$upperIterLimit"; i++ )); do
    for ((j = 0; j < "$iterRepeatFactor"; j++)); do
       runNum=$(("${runNum}" + 1))
 
-      numFields=$(("${i}" ** 2))
-      numEntries=$(("${i}" ** 2))
+      numFields=$((2 ** "${i}"))
+      numEntries=$((2 ** "${i}"))
 
       root -q read_write_record.C+("${runNum}", "${numFields}", "${numEntries}", \"w\")
       root -q read_write_record.C+("${runNum}", "${numFields}", "${numEntries}", \"r\")
