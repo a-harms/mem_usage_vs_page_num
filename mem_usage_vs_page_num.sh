@@ -53,8 +53,8 @@ for (( i = 1; i <= "$upperIterLimit"; i++ )); do
       numFields="250"
       numEntries=$(( 5 * "${i}"))
 
-      root -q read_write_record.C+(\""${runGroupDirectory}"\", "${runNum}", "${numFields}", "${numEntries}", \"w\")
-      root -q read_write_record.C+(\""${runGroupDirectory}"\", "${runNum}", "${numFields}", "${numEntries}", \"r\")
+      root -q read_write_record.C+("${groupNum}", "${runNum}", "${numFields}", "${numEntries}", \"w\")
+      root -q read_write_record.C+("${groupNum}", "${runNum}", "${numFields}", "${numEntries}", \"r\")
    done
 done
 
