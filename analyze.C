@@ -168,15 +168,14 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
                numClustersValues.push_back((long long)runNumToRunInfo[ri].numClusters);
             }
 
-            // Convert rss and vss from KiB to MiB
-            std::transform(maxRssValues.begin(), maxRssValues.end(), maxRssValues.begin(), [](long long x) { return x / 1024; });
-            std::transform(maxVssValues.begin(), maxVssValues.end(), maxVssValues.begin(), [](long long x) { return x / 1024; });
-
-
             // Get the average values for the current parameter iteration/group
-            long long avgMaxRss = mean(maxRssValues);
-            long long avgMaxVss = mean(maxVssValues);
+            double avgMaxRss = mean(maxRssValues);
+            double avgMaxVss = mean(maxVssValues);
             long long avgNumClusters = mean(numClustersValues);
+
+            // Convert average rss and vss value to MiB from KiB for nicer plots
+            avgMaxRss = avgMaxRss / 1024;
+            avgMaxVss = avgMaxVss / 1024;
 
             // Calculate the number of pages given the current iteration of input parameters
             int numPages = j * i;
@@ -195,26 +194,26 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
    // Plot the average maximum rss versus the number of pages per file
    c->cd(1);
    gPad->SetGrid();
-   gr1->SetTitle("Average max rss values");
+   gr1->SetTitle("Average Maximum RSS Values");
    gr1->GetXaxis()->SetTitle("Number of pages per file");
-   gr1->GetYaxis()->SetTitle("Average max rss value for parameter set (MiB)");
-   gr1->Draw("AC*");
+   gr1->GetYaxis()->SetTitle("Average maximum RSS for parameter set (MiB)");
+   gr1->Draw("ALP");
 
    // Plot the average maximum vss versus the number of pages per file
    c->cd(2);
    gPad->SetGrid();
-   gr2->SetTitle("Average max vss values");
+   gr2->SetTitle("Average Maximum VSS Values");
    gr2->GetXaxis()->SetTitle("Number of pages per file");
-   gr2->GetYaxis()->SetTitle("Average max vss value for parameter set (Mib)");
-   gr2->Draw("AC*");
+   gr2->GetYaxis()->SetTitle("Average max VSS value for parameter set (MiB)");
+   gr2->Draw("ALP");
 
    // Plot the average number of clusters per file versus the number of pages per file
    c->cd(3);
    gPad->SetGrid();
-   gr3->SetTitle("Average numClusters versus numPages");
+   gr3->SetTitle("Average number of Clusters");
    gr3->GetXaxis()->SetTitle("Number of pages per file");
    gr3->GetYaxis()->SetTitle("Number of clusters written to file");
-   gr3->Draw("AC*");
+   gr3->Draw("ALP");
 
    // Force the graphics to be rendered to the TCanvas and then save as a pdf
    c->Modified();
