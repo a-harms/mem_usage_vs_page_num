@@ -22,6 +22,7 @@
 
 #include <map>
 #include <numeric>
+#include <algorithm>
 
 
 //#include <TH1F.h>
@@ -167,6 +168,11 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
                numClustersValues.push_back((long long)runNumToRunInfo[ri].numClusters);
             }
 
+            // Convert rss and vss from KiB to MiB
+            std::transform(maxRssValues.begin(), maxRssValues.end(), maxRssValues.begin(), [](long long x) { return x / 1024; });
+            std::transform(maxVssValues.begin(), maxVssValues.end(), maxVssValues.begin(), [](long long x) { return x / 1024; });
+
+
             // Get the average values for the current parameter iteration/group
             long long avgMaxRss = mean(maxRssValues);
             long long avgMaxVss = mean(maxVssValues);
@@ -183,6 +189,7 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
       }
    }
 
+
    // Plot the results
 
    // Plot the average maximum rss versus the number of pages per file
@@ -190,7 +197,7 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
    gPad->SetGrid();
    gr1->SetTitle("Average max rss values");
    gr1->GetXaxis()->SetTitle("Number of pages per file");
-   gr1->GetYaxis()->SetTitle("Average max rss value for parameter set (kb)");
+   gr1->GetYaxis()->SetTitle("Average max rss value for parameter set (MiB)");
    gr1->Draw("AC*");
 
    // Plot the average maximum vss versus the number of pages per file
@@ -198,7 +205,7 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
    gPad->SetGrid();
    gr2->SetTitle("Average max vss values");
    gr2->GetXaxis()->SetTitle("Number of pages per file");
-   gr2->GetYaxis()->SetTitle("Average max vss value for parameter set (kb)");
+   gr2->GetYaxis()->SetTitle("Average max vss value for parameter set (Mib)");
    gr2->Draw("AC*");
 
    // Plot the average number of clusters per file versus the number of pages per file
