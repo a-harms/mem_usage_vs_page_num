@@ -22,14 +22,15 @@ else
 	groupNum=$(("${largestGroupNum}" + 1))
 fi
 
-runGroupDirectory="./csv_records/""${groupNum}""/"
-csvRunGroupRecord="groupRecord.csv"
 
-mkdir "${runGroupDirectory}"
+mkdir ./csv_records/"${groupNum}"/
+mkdir ./test_files/"${groupNum}"/
+mkdir ./output_plots/"${groupNum}"/
 
 # Make csv record file and enter header row for run group csv record files
-touch "${runGroupDirectory}""${csvRunGroupRecord}"
-echo "runNum,numFields,numEntries,numClusters" > "${runGroupDirectory}""${csvRunGroupRecord}"
+csvRunGroupRecord="./csv_records/"${groupNum}"/groupRecord.csv"
+touch "${csvRunGroupRecord}"
+echo "runNum,numFields,numEntries,numClusters" > "${csvRunGroupRecord}"
 
 
 
@@ -58,5 +59,5 @@ for (( i = 1; i <= "$upperIterLimit"; i++ )); do
    done
 done
 
-root -q analyze.C+(\""${runGroupDirectory}"\", \"w\")
-#root -q analyze.C+(\""${runGroupDirectory}"\", \"r\")
+root -q analyze.C+("${groupNum}", \"w\")
+#root -q analyze.C+("${groupNum}", \"r\")

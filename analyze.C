@@ -43,7 +43,7 @@ long long mean(std::vector<long long> const& vec) {
 }
 
 
-std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
+std::map<int, runInfo> LoadMap(int groupNum) {
    // Creating empty map to be filled and returned later
    std::map<int, runInfo> runNumToRunInfo;
 
@@ -59,7 +59,7 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
    int numClusters;
 
    // Initialize input file stream for run group record csv file
-   std::string csvRunGroupRecordName = csvRunGroupRecordDirectory + "groupRecord.csv";
+   std::string csvRunGroupRecordName = "./csv_records/" + std::to_string(groupNum) + "/groupRecord.csv";
    std::ifstream csvRunGroupRecord(csvRunGroupRecordName);
 
    // Remove header row from group record csv file
@@ -96,7 +96,7 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
 
 
             // Load in memory usage profile as RDataFrame
-            std::string runRecordFile = csvRunGroupRecordDirectory + "write_" + std::to_string(runNum);
+            std::string runRecordFile = "./csv_records/" + std::to_string(groupNum) + "/write_" + std::to_string(runNum);
             auto df = ROOT::RDF::FromCSV(runRecordFile);
 
             auto minVss = df.Min("vss");
@@ -123,7 +123,7 @@ std::map<int, runInfo> LoadMap(std::string csvRunGroupRecordDirectory) {
 }
 
 
-void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
+void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
    // Find the max numFields and numEntries values assuming that they are held by the last runNumToRunInfo map entry value
    auto lastMapPair = std::prev(runNumToRunInfo.end());
    int maxFieldNum = lastMapPair->second.numFields;
@@ -212,13 +212,14 @@ void GenerateGroupPlots(map<int, runInfo> runNumToRunInfo) {
    // Force the graphics to be rendered to the TCanvas and then save as a pdf
    c->Modified();
    c->Update();
-   c->SaveAs("./output_plots/groupPlots/results.pdf");
+   std::string plotFileName = "./output_plots/" + std::to_string(groupNum) + "/results.pdf";
+   c->SaveAs(plotFileName.c_str());
 }
 
-void analyze(std::string csvRunGroupRecordDirectory, std::string rw) {
+void analyze(int groupNum, std::string rw) {
    // Parsing run group record csv file and creating map for accessing run information using run number
-   std::map<int, runInfo> runNumToRunInfo = LoadMap(csvRunGroupRecordDirectory);
+   std::map<int, runInfo> runNumToRunInfo = LoadMap(groupNum);
 
    // Traverse previously created map and make plots for the run group
-   GenerateGroupPlots(runNumToRunInfo);
+   GenerateGroupPlots(groupNum, runNumToRunInfo);
 }

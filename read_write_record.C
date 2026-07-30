@@ -80,7 +80,7 @@ void runInformationRecord(int groupNum, int runNum, int numFields, int numEntrie
    csvRunGroupRecord.open(csvFileName, std::ios_base::app);
 
    // Determine the current file name for the pertinent run
-   std::string fileName =  "./test_files/" + std::to_string(runNum) + ".root";
+   std::string fileName =  "./test_files/" + std::to_string(groupNum) + "/" + std::to_string(runNum) + ".root";
 
    // Retrieve the number of clusters used in teh particular run
    int numClusters = ROOT::RNTupleReader::Open("blank", fileName)->GetDescriptor().GetNClusters();
@@ -122,7 +122,7 @@ void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
    options.SetMaxUnzippedClusterSize(clusterSize);
 
    // creates a root file and a page sink which the writer connects the model to
-   std::string fileName =  "./test_files/" + std::to_string(runNum) + ".root";
+   std::string fileName =  "./test_files/" + std::to_string(groupNum) + "/" + std::to_string(runNum) + ".root";
    auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName, options);
 
 
