@@ -92,6 +92,9 @@ void runInformationRecord(int groupNum, int runNum, int numFields, int numEntrie
 
 
 void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
+   int numEntriesPerCluster = 1000;
+   int numClustersPerGroup = 5;
+
    // Create and open csv file for recording memory usage statistics for given run
    std::ofstream csvRunRecord;
    std::string csvFileName = "./csv_records/" + std::to_string(groupNum) + "/write_" + std::to_string(runNum);
@@ -125,12 +128,15 @@ void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
    std::string fileName =  "./test_files/" + std::to_string(groupNum) + "/" + std::to_string(runNum) + ".root";
    auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName, options);
 
-
    // Do an initial save of memory usage statistics and run information to csv file
    csvRunRecord << runNum << "," << 0 << "," << get_vss() << "," << get_mem_usage() << std::endl;
 
    // Create entry pointer to use for loading in and writing entries
    auto entryPtr = writer->CreateEntry();
+
+   // Initialize cluster and clusterGroup counters
+   int numClusters = 0;
+   int numClusterGroups = 0;
 
    // Write entries to data model
    for (int i = 1; i <= numEntries; i++) {
@@ -145,9 +151,22 @@ void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
 
       // Fill the entry into the ntuple
       writer->Fill();
+
+      // Manually commit clusters (and cluster groups when necessary)
+      if (i % numEntriesPerCluster == 0) {
+         // Boolean condition for determining if a cluster group should be committed
+         bool commitClusterGroup = numClusters % numClustersPerGroup == 0;
+         // Commit the clusters and subsequently commit a cluster group if the aformentioned condition is met
+         writer->CommitCluster(commitClusterGroup);
+
+         // Increment respective cluster and clusterGroup counters
+         numClusters += 1;
+         if (commitClusterGroup) {
+            numClusterGroups += 1;
+         }
+      }
    }
 }
-
 
 
 void ReadFile(int runNum, int numEntries, int numFields) {

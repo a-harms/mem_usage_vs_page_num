@@ -8,9 +8,9 @@ shopt -s extglob
 #source ~/Documents/root_development/rel/bin/thisroot.sh
 
 
-####################################################################################################
-######## Set the group number, figure out file path parameters, and makde csv record files #########
-####################################################################################################
+###################################################################################################
+######## Set the group number, figure out file path parameters, and make csv record files #########
+###################################################################################################
 
 # Check to see if there are previous record files in the csv_records directory
 if [ $(ls -1 ./csv_records/ | wc -l) -eq "0" ]; then
@@ -38,7 +38,7 @@ echo "runNum,numFields,numEntries,numClusters" > "${csvRunGroupRecord}"
 ######## Iterate over and call root macros ########
 ###################################################
 
-upperIterLimit="5"
+upperIterLimit="200"
 iterRepeatFactor="1"
 
 
@@ -51,8 +51,9 @@ for (( i = 1; i <= "$upperIterLimit"; i++ )); do
       #numFields=$((2 ** "${i}"))
       #numEntries=$((2 ** "${i}"))
 
-      numFields="250"
+      numFields="500"
       numEntries=$(( 5 * "${i}"))
+      #numEntries="${i}"
 
       root -q read_write_record.C+("${groupNum}", "${runNum}", "${numFields}", "${numEntries}", \"w\")
       root -q read_write_record.C+("${groupNum}", "${runNum}", "${numFields}", "${numEntries}", \"r\")
