@@ -153,9 +153,9 @@ void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
       writer->Fill();
 
       // Manually commit clusters (and cluster groups when necessary)
-      if (i % numEntriesPerCluster == 0) {
+      if ((i % numEntriesPerCluster == 0) && (i != 0)) {
          // Boolean condition for determining if a cluster group should be committed
-         bool commitClusterGroup = numClusters % numClustersPerGroup == 0;
+         bool commitClusterGroup = (numClusters % numClustersPerGroup == 0) && (numClusters != 0);
          // Commit the clusters and subsequently commit a cluster group if the aformentioned condition is met
          writer->CommitCluster(commitClusterGroup);
 
