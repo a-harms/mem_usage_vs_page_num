@@ -38,7 +38,7 @@ echo "runNum,numFields,numEntries,numClusters" > "${csvRunGroupRecord}"
 ######## Iterate over and call root macros ########
 ###################################################
 
-upperIterLimit="200"
+upperIterLimit="500"
 iterRepeatFactor="1"
 
 
@@ -52,7 +52,7 @@ for (( i = 1; i <= "$upperIterLimit"; i++ )); do
       #numEntries=$((2 ** "${i}"))
 
       numFields="500"
-      numEntries=$(( 5 * "${i}"))
+      numEntries=$(( 10 * "${i}"))
       #numEntries="${i}"
 
       root -q read_write_record.C+("${groupNum}", "${runNum}", "${numFields}", "${numEntries}", \"w\")

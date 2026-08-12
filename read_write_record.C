@@ -92,7 +92,7 @@ void runInformationRecord(int groupNum, int runNum, int numFields, int numEntrie
 
 
 void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
-   int numEntriesPerCluster = 1000;
+   int numEntriesPerCluster = 30;
    int numClustersPerGroup = 5;
 
    // Create and open csv file for recording memory usage statistics for given run
@@ -120,7 +120,7 @@ void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
    options.SetMaxUnzippedPageSize(pageSize);
 
    // Set the maximum cluster size to be smaller (64 kB) in order to reduce the group run time
-   std::size_t clusterSize = 64000;
+   std::size_t clusterSize = 64000000;
    options.SetApproxZippedClusterSize(clusterSize);
    options.SetMaxUnzippedClusterSize(clusterSize);
 
