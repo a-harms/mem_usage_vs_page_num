@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -o errexit
 
 # Enable extended globs
 shopt -s extglob
