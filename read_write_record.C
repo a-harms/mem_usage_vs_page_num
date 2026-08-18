@@ -169,7 +169,7 @@ void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
 }
 
 
-void ReadFile(int runNum, int numEntries, int numFields) {
+void ReadFile(int groupNum, int runNum, int numEntries, int numFields) {
    // Create an empty RNTuple model and get a unique pointer to it
    auto model = ROOT::RNTupleModel::Create();
 
@@ -182,8 +182,7 @@ void read_write_record(int groupNum, int runNum, int numFields, int numEntries, 
       CreateFile(groupNum, runNum, numEntries, numFields);
       runInformationRecord(groupNum, runNum, numFields, numEntries);
    } else if (std::strcmp(rw.c_str(), "r")==0) {
-      //ReadFile(runNum, numEntries, numFields);
-      //runInformationRecord("./csv_records/groupRecord/groupRecord.csv", runNum, numFields, numEntries);
+      ReadFile(groupNum, runNum, numEntries, numFields);
    } else {
       std::cout << "Incorrect arguments provided. Please review the required command line options and arguments." << std::endl;
    }
