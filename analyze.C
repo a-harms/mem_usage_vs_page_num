@@ -25,8 +25,6 @@
 #include <algorithm>
 
 
-//#include <TH1F.h>
-
 struct runInfo {
    int numFields;
    int numEntries;
