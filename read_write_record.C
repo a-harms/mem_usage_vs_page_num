@@ -91,7 +91,7 @@ void runInformationRecord(int groupNum, int runNum, int numFields, int numEntrie
 
 
 
-void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
+void WriteFile(int groupNum, int runNum, int numEntries, int numFields) {
    int numEntriesPerCluster = 30;
    int numClustersPerGroup = 5;
 
@@ -179,7 +179,7 @@ void ReadFile(int groupNum, int runNum, int numEntries, int numFields) {
 
 void read_write_record(int groupNum, int runNum, int numFields, int numEntries, std::string rw) {
    if (std::strcmp(rw.c_str(), "w")==0) {
-      CreateFile(groupNum, runNum, numEntries, numFields);
+      WriteFile(groupNum, runNum, numEntries, numFields);
       runInformationRecord(groupNum, runNum, numFields, numEntries);
    } else if (std::strcmp(rw.c_str(), "r")==0) {
       ReadFile(groupNum, runNum, numEntries, numFields);
