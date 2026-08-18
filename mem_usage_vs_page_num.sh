@@ -49,12 +49,8 @@ for (( i = 1; i <= "$upperIterLimit"; i++ )); do
    for ((j = 0; j < "$iterRepeatFactor"; j++)); do
       runNum=$(("${runNum}" + 1))
 
-      #numFields=$((2 ** "${i}"))
-      #numEntries=$((2 ** "${i}"))
-
       numFields="500"
       numEntries=$(( 10 * "${i}"))
-      #numEntries="${i}"
 
       root -q read_write_record.C+("${groupNum}", "${runNum}", "${numFields}", "${numEntries}", \"w\")
       root -q read_write_record.C+("${groupNum}", "${runNum}", "${numFields}", "${numEntries}", \"r\")
