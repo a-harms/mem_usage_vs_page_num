@@ -44,7 +44,7 @@ long long mean(std::vector<long long> const& vec) {
 }
 
 
-std::map<int, runInfo> LoadMap(int groupNum) {
+std::map<int, runInfo> LoadMap(int groupNum, std::string rw) {
    // Creating empty map to be filled and returned later
    std::map<int, runInfo> runNumToRunInfo;
 
@@ -95,9 +95,19 @@ std::map<int, runInfo> LoadMap(int groupNum) {
             tempInfoLoader.numEntries = numEntries;
             tempInfoLoader.numClusters = numClusters;
 
+            // Generate appropriate name for memory usage profile csv file
+            std::string runRecordFile = rw;
+            if (rw.compare("w") == 0) {
+               std::cout << "write file" << std::endl;
+               runRecordFile = "./csv_records/" + std::to_string(groupNum) + "/write_" + std::to_string(runNum);
+            } else if (rw.compare("r") == 0) {
+               std::cout << "read file" << std::endl;
+               runRecordFile = "./csv_records/" + std::to_string(groupNum) + "/read_" + std::to_string(runNum);
+            } else {
+               std::cout << "Incorrect read/write setting parameter passed. Please double check parameter used." << std::endl;
+            }
 
             // Load in memory usage profile as RDataFrame
-            std::string runRecordFile = "./csv_records/" + std::to_string(groupNum) + "/write_" + std::to_string(runNum);
             auto df = ROOT::RDF::FromCSV(runRecordFile);
 
             auto minVss = df.Min("vss");
@@ -230,7 +240,7 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
 
 void analyze(int groupNum, std::string rw) {
    // Parsing run group record csv file and creating map for accessing run information using run number
-   std::map<int, runInfo> runNumToRunInfo = LoadMap(groupNum);
+   std::map<int, runInfo> runNumToRunInfo = LoadMap(groupNum, rw);
 
    // Traverse previously created map and make plots for the run group
    GenerateGroupPlots(groupNum, runNumToRunInfo);
