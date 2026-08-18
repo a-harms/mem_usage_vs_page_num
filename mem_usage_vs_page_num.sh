@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# \date August 2026
+# \author Anna Helena Harms
+
+
 set -o errexit
 
 # Enable extended globs
