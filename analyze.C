@@ -213,8 +213,8 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
    gr2->SetTitle("Average Maximum VSS Values");
    gr2->GetXaxis()->SetTitle("Number of pages per file");
    gr2->GetYaxis()->SetTitle("Average max VSS value for parameter set (MiB)");
-   gr1->GetXaxis()->CenterTitle(true);
-   gr1->GetYaxis()->CenterTitle(true);
+   gr2->GetXaxis()->CenterTitle(true);
+   gr2->GetYaxis()->CenterTitle(true);
    gr2->Draw("ALP");
 
    // Plot the average number of clusters per file versus the number of pages per file
@@ -223,8 +223,8 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
    gr3->SetTitle("Average number of Clusters");
    gr3->GetXaxis()->SetTitle("Number of pages per file");
    gr3->GetYaxis()->SetTitle("Number of clusters written to file");
-   gr1->GetXaxis()->CenterTitle(true);
-   gr1->GetYaxis()->CenterTitle(true);
+   gr3->GetXaxis()->CenterTitle(true);
+   gr3->GetYaxis()->CenterTitle(true);
    gr3->Draw("ALP");
 
    // Force the graphics to be rendered to the TCanvas and then save as a pdf
