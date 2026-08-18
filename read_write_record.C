@@ -150,7 +150,7 @@ void WriteFile(int groupNum, int runNum, int numEntries, int numFields) {
       csvRunRecord << runNum << "," << i << "," << get_vss() << "," << get_mem_usage() << std::endl;
 
       // Fill the entry into the ntuple
-      writer->Fill();
+      writer->Fill(*entryPtr);
 
       // Manually commit clusters (and cluster groups when necessary)
       if ((i % numEntriesPerCluster == 0) && (i != 0)) {
