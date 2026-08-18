@@ -31,11 +31,11 @@ long get_mem_usage() {
     struct rusage usage;
     int ret;
     ret = getrusage(RUSAGE_SELF, &usage);
-    return usage.ru_maxrss; // in KB
+    return usage.ru_maxrss; // in KiB
 }
 
 
-// returns the virtual set size in kB
+// returns the virtual set size in KiB
 long get_vss() {
    long vss = 0;
    std::string line;
@@ -82,7 +82,7 @@ void runInformationRecord(int groupNum, int runNum, int numFields, int numEntrie
    // Determine the current file name for the pertinent run
    std::string fileName =  "./test_files/" + std::to_string(groupNum) + "/" + std::to_string(runNum) + ".root";
 
-   // Retrieve the number of clusters used in teh particular run
+   // Retrieve the number of clusters used in the particular run
    int numClusters = ROOT::RNTupleReader::Open("blank", fileName)->GetDescriptor().GetNClusters();
 
    // Record information for this specific run to run group csv file
@@ -119,7 +119,7 @@ void CreateFile(int groupNum, int runNum, int numEntries, int numFields) {
    options.SetInitialUnzippedPageSize(pageSize);
    options.SetMaxUnzippedPageSize(pageSize);
 
-   // Set the maximum cluster size to be smaller (64 kB) in order to reduce the group run time
+   // Set the maximum cluster size to be large enough that clusters are not written before cluster writing is manually triggered
    std::size_t clusterSize = 64000000;
    options.SetApproxZippedClusterSize(clusterSize);
    options.SetMaxUnzippedClusterSize(clusterSize);
