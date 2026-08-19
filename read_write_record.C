@@ -43,30 +43,31 @@ long get_vss() {
    ifstream statusFile("/proc/self/status");
 
    while (statusFile.good()) {
-      if (statusFile.is_open()) {
-         // Iterate through the different lines of the /proc/self/status file
-         getline(statusFile, line);
-
-         // Get the label for the listed value
-         std::string delimiter = ":";
-         size_t position = line.find(delimiter);
-         std::string label = line.substr(0, position);
-
-         // Check to see if the line contains one of the sought out values and extract them if so
-         if ((label.compare("VmSize")) == 0) {
-            line.erase(0, position + delimiter.length());
-
-            // remove the trailing " kB" characters from the line
-            line.erase((line.length() - 3), 3);
-
-            // trim leading space before digits 0-9
-            line.erase(0, line.find_first_of("123456790"));
-
-            vss = stoul(line);
-         }
-
-      } else {
+      // Check to see if the status file is still open and crash the program if not
+      if (!statusFile.is_open()) {
          std::cout << "Error opening status file" << std::endl;
+         std::exit(1);
+      }
+
+      // Iterate through the different lines of the /proc/self/status file
+      getline(statusFile, line);
+
+      // Get the label for the listed value
+      std::string delimiter = ":";
+      size_t position = line.find(delimiter);
+      std::string label = line.substr(0, position);
+
+      // Check to see if the line contains one of the sought out values and extract them if so
+      if ((label.compare("VmSize")) == 0) {
+         line.erase(0, position + delimiter.length());
+
+         // remove the trailing " kB" characters from the line
+         line.erase((line.length() - 3), 3);
+
+         // trim leading space before digits 0-9
+         line.erase(0, line.find_first_of("123456790"));
+
+         vss = stoul(line);
       }
    }
    return vss;
