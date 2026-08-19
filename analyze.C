@@ -130,7 +130,7 @@ std::map<int, runInfo> LoadMap(int groupNum, std::string rw) {
 }
 
 
-void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
+void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo, std::string rw) {
    // Find the max numFields and numEntries values assuming that they are held by the last runNumToRunInfo map entry value
    auto lastMapPair = std::prev(runNumToRunInfo.end());
    int maxFieldNum = lastMapPair->second.numFields;
@@ -227,10 +227,21 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
    gr3->GetYaxis()->CenterTitle(true);
    gr3->Draw("ALP");
 
-   // Force the graphics to be rendered to the TCanvas and then save as a pdf
+   // Force the graphics to be rendered to the TCanvas
    c->Modified();
    c->Update();
-   std::string plotFileName = "./output_plots/" + std::to_string(groupNum) + "/results.pdf";
+
+   // Designate file name based on read/write parameter
+   std::string plotFileName;
+   if (std::strcmp(rw.c_str(), "w")==0) {
+      plotFileName = "./output_plots/" + std::to_string(groupNum) + "/write_results.pdf";
+   } else if (std::strcmp(rw.c_str(), "r")==0) {
+      plotFileName = "./output_plots/" + std::to_string(groupNum) + "/results.pdf";
+   } else {
+      std::cout << "Incorrect arguments provided. Please review the required command line options and arguments." << std::endl;
+   }
+
+   // Save plots as a pdf
    c->SaveAs(plotFileName.c_str());
 }
 
@@ -239,5 +250,5 @@ void analyze(int groupNum, std::string rw) {
    std::map<int, runInfo> runNumToRunInfo = LoadMap(groupNum, rw);
 
    // Traverse previously created map and make plots for the run group
-   GenerateGroupPlots(groupNum, runNumToRunInfo);
+   GenerateGroupPlots(groupNum, runNumToRunInfo, rw);
 }
