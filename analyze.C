@@ -137,7 +137,7 @@ void GenerateGroupPlots(int groupNum, map<int, runInfo> runNumToRunInfo) {
    int maxEntryNum = lastMapPair->second.numEntries;
 
    // TCanvas
-   auto c = new TCanvas("c", "Something here", 0, 0, 1800, 600);
+   auto c = new TCanvas("c", "Plots", 0, 0, 1800, 600);
    c->Divide(3);
 
    // Create empty graphs for plotting memory usage plots
