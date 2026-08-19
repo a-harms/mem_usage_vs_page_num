@@ -27,7 +27,7 @@
 
 
 // for resident set size tracking
-long get_mem_usage() {
+long get_rss() {
     struct rusage usage;
     int ret;
     ret = getrusage(RUSAGE_SELF, &usage);
@@ -129,7 +129,7 @@ void WriteFile(int groupNum, int runNum, int numEntries, int numFields) {
    auto writer = ROOT::RNTupleWriter::Recreate(std::move(model), "blank", fileName, options);
 
    // Do an initial save of memory usage statistics and run information to csv file
-   csvRunRecord << runNum << "," << 0 << "," << get_vss() << "," << get_mem_usage() << std::endl;
+   csvRunRecord << runNum << "," << 0 << "," << get_vss() << "," << get_rss() << std::endl;
 
    // Create entry pointer to use for loading in and writing entries
    auto entryPtr = writer->CreateEntry();
@@ -147,7 +147,7 @@ void WriteFile(int groupNum, int runNum, int numEntries, int numFields) {
          *fldPtr = 0;
       }
       // Save memory usage statistics and run information to csv file
-      csvRunRecord << runNum << "," << i << "," << get_vss() << "," << get_mem_usage() << std::endl;
+      csvRunRecord << runNum << "," << i << "," << get_vss() << "," << get_rss() << std::endl;
 
       // Fill the entry into the ntuple
       writer->Fill(*entryPtr);
